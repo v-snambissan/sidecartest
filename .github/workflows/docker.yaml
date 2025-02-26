@@ -25,11 +25,11 @@ jobs:
     # Step 4: Build and push the main-app container image
     - name: Build and push webapp-container image
       run: |
-        docker build -t ${{ secrets.AZURE_REGISTRY_NAME }}.azurecr.io/webapp-container:latest ./main-app
+        docker build -t ${{ secrets.AZURE_REGISTRY_NAME }}.azurecr.io/webapp-container:latest ./main-app/Dockerfile
         docker push ${{ secrets.AZURE_REGISTRY_NAME }}.azurecr.io/webapp-container:latest
 
     # Step 5: Build and push the sidecar container image
     - name: Build and push sidecar-container image
       run: |
-        docker build -t ${{ secrets.AZURE_REGISTRY_NAME }}.azurecr.io/sidecar-container:latest ./sidecar-app
+        docker build -t ${{ secrets.AZURE_REGISTRY_NAME }}.azurecr.io/sidecar-container:latest ./sidecar-app/Dockerfile
         docker push ${{ secrets.AZURE_REGISTRY_NAME }}.azurecr.io/sidecar-container:latest
