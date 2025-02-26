@@ -1,0 +1,48 @@
+name: Build, Push and Deploy Containers to Azure Container Registry (ACR) and Azure Container Apps (ACA)
+
+on:
+  push:
+    branches:
+      - main  # Trigger this workflow on pushes to the 'main' branch
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: Checkout the repository code
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    # Step 2: Log in to Azure
+    - name: Log in to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}  # Azure credentials stored as GitHub secrets
+
+    # Step 3: Log in to Azure Container Registry (ACR)
+    - name: Log in to Azure Container Registry
+      uses: azure/docker-login@v1
+      with:
+        login-server: ${{ secrets.AZURE_REGISTRY_NAME }}.azurecr.io
+        username: ${{ secrets.AZURE_REGISTRY_USERNAME }}
+        password: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
+
+    # Step 4: Build and push the main-app container image
+    - name: Build and push webapp-container image
+      run: |
+        docker build -t ${{ secrets.AZURE_REGISTRY_NAME }}.azurecr.io/webapp-container:latest ./main-app
+        docker push ${{ secrets.AZURE_REGISTRY_NAME }}.azurecr.io/webapp-container:latest
+
+    # Step 5: Build and push the sidecar container image
+    - name: Build and push sidecar-container image
+      run: |
+        docker build -t ${{ secrets.AZURE_REGISTRY_NAME }}.azurecr.io/sidecar-container:latest ./sidecar-app
+        docker push ${{ secrets.AZURE_REGISTRY_NAME }}.azurecr.io/sidecar-container:latest
+
+    # Step 6: Deploy to Azure Container Apps (ACA)
+    - name: Deploy to Azure Container Apps
+      run: |
+        az containerapp up \
+          --name my-container-app \
+    
