@@ -1,14 +1,10 @@
-# Start with the official Node.js image
-FROM node:14-alpine
+# Use the official NGINX image as the base
+FROM nginx:latest
 
-# Set the working directory
-WORKDIR /usr/src/app
+# Copy your custom NGINX config file (to act as a reverse proxy)
+COPY nginx.conf /etc/nginx/nginx.conf
 
-# Copy the sidecar.js file
-COPY ./sidecar.js ./
+# Expose the required port for NGINX
+EXPOSE 80
 
-# Install dependencies (none in this case for sidecar)
-RUN npm init -y  # Initialize the project, but no dependencies in this case
-
-# Start the sidecar script
-CMD ["node", "sidecar.js"]
+CMD ["nginx", "-g", "daemon off;"]
