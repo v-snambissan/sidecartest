@@ -1,0 +1,14 @@
+# Start with the official Node.js image
+FROM node:14-alpine
+
+# Set the working directory
+WORKDIR /usr/src/app
+
+# Copy the sidecar.js file
+COPY ./sidecar.js ./
+
+# Install dependencies (none in this case for sidecar)
+RUN npm init -y  # Initialize the project, but no dependencies in this case
+
+# Start the sidecar script
+CMD ["node", "sidecar.js"]
